@@ -8,10 +8,10 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
     
     var businesses: [Business]!
-    
+    let searchController = UISearchController(searchResultsController: nil)
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -24,9 +24,7 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         searchBar.sizeToFit()
         navigationItem.titleView = searchBar
         searchBar.placeholder = "Search Resturant"
-        
-        
-
+    
         
         tableView.delegate = self
         tableView.dataSource = self
