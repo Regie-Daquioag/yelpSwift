@@ -8,21 +8,24 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate{
+class BusinessesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate{
+    
     
     var businesses: [Business]!
-    let searchController = UISearchController(searchResultsController: nil)
+    
+    var searchBar: UISearchBar!
+    var searchBarString = ""
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
-        let searchBar = UISearchBar()
+        searchBar = UISearchBar()
         searchBar.sizeToFit()
         navigationItem.titleView = searchBar
+        searchBar.showsCancelButton = true
+        searchBar.delegate = self as UISearchBarDelegate
         searchBar.placeholder = "Search Resturant"
     
         
@@ -32,28 +35,34 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         tableView.estimatedRowHeight = 100
         
         Business.searchWithTerm(term: "Thai", completion: { (businesses: [Business]?, error: Error?) -> Void in
-            
             self.businesses = businesses
             self.tableView.reloadData()
+            
             for business in businesses! {
                 print(business.name!)
                 print(business.address!)
             }
-            
-            
             })
-        
-        /* Example of Yelp search with more search options specified
-         Business.searchWithTerm("Restaurants", sort: .distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: Error!) -> Void in
-         self.businesses = businesses
-         
-         for business in businesses {
-         print(business.name!)
-         print(business.address!)
-         }
-         }
-         */
-        
+    }
+    
+    func YelpAPI(input: String){
+        Business.searchWithTerm(term:input, completion: { (businesses: [Business]?, error: Error?) -> Void in
+            self.businesses = businesses
+            self.tableView.reloadData()
+        })
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        self.tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        YelpAPI(input: searchBar.text!)
+        tableView.reloadData()
+        searchBar.resignFirstResponder()
     }
     
     override func didReceiveMemoryWarning() {
